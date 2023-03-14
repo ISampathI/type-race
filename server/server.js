@@ -70,14 +70,13 @@ const updateProgress = (socket, progress) => {
 const findAvailableRoom = () => {
   let roomId;
   for (const room of rooms) {
-    if (room.players.length < MAX_PLAYERS_PER_ROOM) {
+    if (room?.players?.length < MAX_PLAYERS_PER_ROOM) {
       roomId = room.id;
       break;
     }
   }
-  if (!roomId) {
-    roomId = rooms.length + 1;
-    rooms.push({ id: roomId, players: [], text: "" });
+  if (roomId == undefined) {
+    roomId = rooms.length;
   }
   return roomId;
 };
@@ -86,9 +85,8 @@ io.on("connection", (socket) => {
   console.log(`A new client has connected with id ${socket.id}`);
 
   const roomId = findAvailableRoom();
-
   if (!rooms[roomId]) {
-    rooms[roomId] = { players: [], text: "" };
+    rooms[roomId] = { id: roomId, players: [], text: "" };
   }
 
   rooms[roomId].players.push({
@@ -96,6 +94,7 @@ io.on("connection", (socket) => {
     name: `Player ${rooms[roomId].players.length + 1}`,
     progress: "",
   });
+  console.log(roomId, rooms);
   socket.join(`room-${roomId}`);
   socket.emit("joinedRoom", roomId);
 
@@ -134,7 +133,7 @@ io.on("connection", (socket) => {
 
     // if the room is now empty, delete it
     if (rooms[roomId].players.length === 0) {
-      delete rooms[roomId];
+      // delete rooms[roomId];
     }
   });
 });
