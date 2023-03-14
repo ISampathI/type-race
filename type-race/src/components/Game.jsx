@@ -11,9 +11,9 @@ const TyperaceMultiplayer = () => {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    socket.on("players", (players) => {
-      setPlayers(players);
-      console.log(players);
+    socket.on("players", (gameData) => {
+      setPlayers(gameData.players);
+      console.log(gameData.players);
     });
 
     socket.on("text", (text) => {
@@ -48,7 +48,7 @@ const TyperaceMultiplayer = () => {
       <ul className="car-tracks">
         {players.map((player) => (
           <li key={player.id}>
-            {player.name}: {player.progress}
+            {player.name}: {player.progress} - {player.wps || 0}wps
             <div className="car-track">
               {" "}
               <div className="car" style={{ marginLeft: player.progress }}>
