@@ -11,19 +11,40 @@ let players = []; // an array to store the current status of each player's typin
 
 // generate a random text for the game
 const generateText = () => {
-  const words = ['apple', 'banana', 'cherry', 'durian', 'elderberry', 'fig', 'grape', 'honeydew'];
-  const randomIndex = Math.floor(Math.random() * words.length);
-  return words[randomIndex];
+  const words = ['apple', 'banana', 'cherry', 'durian', 'elderberry', 'fig', 'grape', 'honeydew', 'kiwi', 'lemon', 'mango', 'nectarine', 'orange', 'pear', 'quince', 'raspberry', 'strawberry', 'tangerine', 'watermelon'];
+  const textLength = Math.floor(Math.random() * 6) + 15; // generate a random number between 15-20
+  let text = '';
+  for (let i = 0; i < textLength; i++) {
+    const randomIndex = Math.floor(Math.random() * words.length);
+    text += words[randomIndex] + ' ';
+  }
+  return text.trim();
 };
 
 // update the player's progress and emit the updated list of players to all clients
 const updateProgress = (socket, progress) => {
   const playerIndex = players.findIndex((player) => player.id === socket.id);
   if (playerIndex !== -1) {
-    players[playerIndex].progress = progress;
+    const completed = progress.match(new RegExp(`^${text.slice(0, progress.length)}`));
+    const percentage = completed ? (completed[0].length / text.length) * 100 : 0;
+    players[playerIndex].progress = `${percentage.toFixed(2)}%`;
     io.emit('players', players);
   }
 };
+
+
+// const updateProgress = (socket, progress) => {
+//   const playerIndex = players.findIndex((player) => player.id === socket.id);
+//   if (playerIndex !== -1) {
+//     const player = players[playerIndex];
+//     if (progress === text.slice(0, player.progress.length + 1)) {
+//       // Only update progress if the typed text matches the expected text
+//       players[playerIndex].progress = progress;
+//       io.emit('players', players);
+//     }
+//   }
+// };
+
 
 io.on('connection', (socket) => {
   console.log(`A new client has connected with id ${socket.id}`);

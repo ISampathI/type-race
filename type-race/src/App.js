@@ -5,7 +5,7 @@ import TyperaceMultiplayer from "./components/Game";
 function App() {
   return (
     <div className="App">
-      <TyperaceMultiplaye />
+      <TyperaceMultiplayer />
     </div>
   );
 }
