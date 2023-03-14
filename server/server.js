@@ -40,7 +40,7 @@ const generateText = () => {
     text += words[randomIndex] + " ";
   }
   // return text.trim();
-  return "The great in your life comes when you realize that you can learn anything you need to learn to accomplish any goal that you set for yourself."
+  return "The great in your life comes when you realize that you can learn anything you need to learn to accomplish any goal that you set for yourself.";
 };
 
 const calculateProgress = (text, progress) => {
@@ -134,20 +134,11 @@ io.on("connection", (socket) => {
     name: `Player ${rooms[roomId].players.length + 1}`,
     progress: "",
   });
-  console.log(roomId, rooms);
   socket.join(`room-${roomId}`);
   socket.emit("joinedRoom", roomId);
-
-  // send the current text to the new player
-  socket.emit("text", rooms[roomId].text);
-
-  // handle the update progress event
-  socket.on("updateProgress", (progress) => {
-    updateProgress(socket, progress, roomId);
-  });
-
-  // handle the start game event
-  socket.on("startGame", () => {
+  io.to(`room-${roomId}`).emit("text", "Waiting for players");
+  console.log(roomId, rooms);
+  if (rooms[roomId].players.length == MAX_PLAYERS_PER_ROOM) {
     rooms[roomId].id = roomId;
     rooms[roomId].text = generateText();
     rooms[roomId].startTime = Date.now();
@@ -161,7 +152,29 @@ io.on("connection", (socket) => {
       players: rooms[roomId].players,
       startTime: rooms[roomId].startTime,
     });
+  }
+
+  // handle the update progress event
+  socket.on("updateProgress", (progress) => {
+    updateProgress(socket, progress, roomId);
   });
+
+  // handle the start game event
+  // socket.on("startGame", () => {
+  //   rooms[roomId].id = roomId;
+  //   rooms[roomId].text = generateText();
+  //   rooms[roomId].startTime = Date.now();
+  //   rooms[roomId].players = rooms[roomId].players.map((player) => ({
+  //     ...player,
+  //     progress: "",
+  //   }));
+  //   console.log(rooms);
+  //   io.to(`room-${roomId}`).emit("text", rooms[roomId].text);
+  //   io.to(`room-${roomId}`).emit("players", {
+  //     players: rooms[roomId].players,
+  //     startTime: rooms[roomId].startTime,
+  //   });
+  // });
 
   socket.on("disconnect", () => {
     console.log(`The client with id ${socket.id} has disconnected`);
