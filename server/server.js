@@ -21,13 +21,21 @@ const generateText = () => {
   return text.trim();
 };
 
+const calculateProgress = (text, progress) => {
+  const correctChars = text
+    .slice(0, progress.length)
+    .split('')
+    .filter((char, i) => char === progress[i]).length;
+
+  const percentage = (correctChars / text.length) * 100;
+  return `${percentage.toFixed(2)}%`;
+};
+
 // update the player's progress and emit the updated list of players to all clients
 const updateProgress = (socket, progress) => {
   const playerIndex = players.findIndex((player) => player.id === socket.id);
   if (playerIndex !== -1) {
-    const completed = progress.match(new RegExp(`^${text.slice(0, progress.length)}`));
-    const percentage = completed ? (completed[0].length / text.length) * 100 : 0;
-    players[playerIndex].progress = `${percentage.toFixed(2)}%`;
+    players[playerIndex].progress = calculateProgress(text, progress);
     io.emit('players', players);
   }
 };

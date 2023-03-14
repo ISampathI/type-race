@@ -12,6 +12,7 @@ const TyperaceMultiplayer = () => {
   useEffect(() => {
     socket.on('players', (players) => {
       setPlayers(players);
+      console.log(players);
     });
 
     socket.on('text', (text) => {
