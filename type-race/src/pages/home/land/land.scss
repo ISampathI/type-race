@@ -1,0 +1,130 @@
+@import "../../../assets/styles/variables";
+
+
+.Land {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-content: center;
+
+    .planet-img {
+        position: absolute;
+        width: 50%;
+        right: 50%;
+        bottom: -13%;
+        transform: rotate(20deg) translateX(50%);
+    }
+
+    .join-form {
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        padding-block: 40px;
+        transform: translateY(-20%);
+        // border: 1px solid $border-color-2;
+        border-radius: 25px;
+
+        .form-title {
+            font-size: 35px;
+            margin-bottom: 20px;
+            color: $text-color-1;
+        }
+
+        p {
+            color: $text-color-2;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+
+            input[type=text] {
+                width: 48%;
+                height: 40px;
+                background-color: transparent;
+                border: 1px solid $border-color-2;
+                padding: 10px;
+                padding-inline: 20px;
+                border-radius: 20px;
+                color: $text-color-1;
+
+                &::placeholder {
+                    color: $text-color-1;
+                }
+            }
+
+            .select-rocket {
+                height: 200px;
+                width: 200px;
+                margin-bottom: 50px;
+                padding: 10px;
+                position: relative;
+
+                img {
+                    width: 100%;
+                    aspect-ratio: 1/1;
+                    object-fit: contain;
+                    animation: rocketIdelAnim 2s infinite alternate ease;
+                }
+
+                .switch-btn {
+                    width: 50px;
+                    height: 50px;
+                    position: absolute;
+                    color: white;
+                    transform: translateY(-50%);
+                    display: grid;
+                    place-content: center;
+                    font-size: 40px;
+                    cursor: pointer;
+                }
+
+                .left-switch-btn {
+                    top: 50%;
+                    left: -50px;
+                    transition: 1s left;
+
+                    &:hover {
+                        left: -55px;
+                    }
+                }
+
+                .right-switch-btn {
+                    top: 50%;
+                    right: -50px;
+                    transition: 1s right;
+
+                    &:hover {
+                        right: -55px;
+                    }
+                }
+
+                @keyframes rocketIdelAnim {
+                    0% {
+                        transform: translateY(-10px);
+                    }
+
+                    100% {
+                        transform: translateY(10px);
+                    }
+                }
+            }
+
+            input[type=submit] {
+                width: 48%;
+                background-color: $sub-backgorund-color-2;
+                padding: 10px;
+                padding-inline: 20px;
+                border-radius: 20px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+        }
+    }
+}

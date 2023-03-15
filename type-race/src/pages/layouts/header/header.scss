@@ -1,0 +1,43 @@
+.Header{
+    width: 100%;
+    height: 80px;
+    display: flex;
+    color: white;
+    align-items: center;
+    padding-inline: 100px;
+
+    .logo{
+        font-weight: 600;
+        font-size: 20px;
+    }
+    
+    nav{
+        margin-left: auto;
+
+        ul{
+            display: flex;
+            list-style: none;
+            li{
+                margin-right: 50px;
+                padding-block: 10px;
+            }
+
+            .active-nav{
+                border-bottom: 1px solid rgb(252, 200, 0);
+            }
+        }
+    }
+    .buttons{
+        .login-btn{
+            height: 35px;
+            border: 1px solid white;
+            padding: 10px;
+            margin-left: 30px;
+            padding-inline: 20px;
+            background-color: transparent;
+            border-radius: 18px;
+            color: white;
+            font-weight: 600;
+        }
+    }
+}

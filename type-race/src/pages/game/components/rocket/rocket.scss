@@ -1,0 +1,22 @@
+.Rocket {
+    height: 100px;
+    width: 100px;
+    position: relative;
+
+    img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: contain;
+        animation: rocketIdelAnim 3s infinite alternate;
+    }
+
+    @keyframes rocketIdelAnim {
+        0% {
+            transform: translateY(-5px);
+        }
+
+        100% {
+            transform: translateY(5px);
+        }
+    }
+}

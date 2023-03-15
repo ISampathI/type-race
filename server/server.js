@@ -69,7 +69,7 @@ const updateProgress = (socket, progress) => {
   if (room) {
     const player = room.players.find((p) => p.id === socket.id);
     if (player) {
-      let wps = 0;
+      let wpm = 0;
       player.progress = calculateProgress(room.text, progress);
       if (room.startTime) {
         const elapsedTime = (Date.now() - room.startTime) / 1000; // Convert to seconds
@@ -90,7 +90,7 @@ const updateProgress = (socket, progress) => {
               (elapsedTime / 60)
           )
         );
-        wps = Math.round(
+        wpm = Math.round(
           progress
             .trim()
             .replace(/(\r\n|\n|\r)/gm, "")
@@ -98,7 +98,7 @@ const updateProgress = (socket, progress) => {
             (elapsedTime / 60)
         );
       }
-      player.wps = wps;
+      player.wpm = wpm;
       io.to(`room-${room.id}`).emit("players", {
         players: room.players,
         startTime: room.startTime,
@@ -123,6 +123,8 @@ const findAvailableRoom = () => {
 
 io.on("connection", (socket) => {
   console.log(`A new client has connected with id ${socket.id}`);
+  const username = socket.handshake.query.username;
+  const character = socket.handshake.query.character;
 
   const roomId = findAvailableRoom();
   if (!rooms[roomId]) {
@@ -131,13 +133,14 @@ io.on("connection", (socket) => {
 
   rooms[roomId].players.push({
     id: socket.id,
-    name: `Player ${rooms[roomId].players.length + 1}`,
+    name: username,
     progress: "",
+    character: character,
   });
   socket.join(`room-${roomId}`);
   socket.emit("joinedRoom", roomId);
   io.to(`room-${roomId}`).emit("text", "Waiting for players");
-  console.log(roomId, rooms);
+  console.log(username, roomId, rooms, socket.handshake.query);
   if (rooms[roomId].players.length == MAX_PLAYERS_PER_ROOM) {
     rooms[roomId].id = roomId;
     rooms[roomId].text = generateText();
