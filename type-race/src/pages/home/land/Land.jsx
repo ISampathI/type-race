@@ -11,7 +11,8 @@ import rocket8 from "../../../assets/img/rockets/rocket8.png";
 import rocket9 from "../../../assets/img/rockets/rocket9.png";
 import planet from "../../../assets/img/space/planet.png";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../../helper/context";
+import { SocketContext, UserContext } from "../../../helper/context";
+import io from "socket.io-client";
 
 const rocketList = [
   rocket1,
@@ -27,8 +28,10 @@ const rocketList = [
 
 function Land() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("player");
   const { user, setUser } = useContext(UserContext);
+  const { socket, setSocket } = useContext(SocketContext);
+
+  const [username, setUsername] = useState("player");
   const [rocket, setRocket] = useState(0);
 
   const changeRocket = (left = true) => {
@@ -42,6 +45,15 @@ function Land() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setUser({ username: username, character: rocket });
+    setSocket(
+      io("http://localhost:5000", {
+        transports: ["websocket", "polling", "flashsocket"],
+        query: {
+          username: username || "guest",
+          character: rocket || 0,
+        },
+      })
+    );
     navigate("play");
   };
 
@@ -58,14 +70,14 @@ function Land() {
           <div className="select-rocket">
             <div className="left-switch-btn switch-btn">
               <i
-                class="fa-solid fa-angle-left"
+                className="fa-solid fa-angle-left"
                 onClick={() => changeRocket()}
               ></i>
             </div>
             <img src={rocketList[rocket]} alt="" className="rocket-img" />
             <div className="right-switch-btn switch-btn">
               <i
-                class="fa-solid fa-angle-right"
+                className="fa-solid fa-angle-right"
                 onClick={() => changeRocket(false)}
               ></i>
             </div>

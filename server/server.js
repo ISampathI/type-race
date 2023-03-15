@@ -7,7 +7,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 let text = ""; // the text that needs to be typed by the players
-const MAX_PLAYERS_PER_ROOM = 2; // maximum number of players per room
+const MAX_PLAYERS_PER_ROOM = 5; // maximum number of players per room
 const rooms = []; // list of all active rooms
 
 // generate a random text for the game
@@ -44,10 +44,6 @@ const generateText = () => {
 };
 
 const calculateProgress = (text, progress) => {
-  // const correctChars = text
-  //   .slice(0, progress.length)
-  //   .split("")
-  //   .filter((char, i) => char === progress[i]).length;
   let correctChars = 0;
   for (let i = 0; i < text.length; i++) {
     const char1 = text[i];
@@ -102,6 +98,7 @@ const updateProgress = (socket, progress) => {
       io.to(`room-${room.id}`).emit("players", {
         players: room.players,
         startTime: room.startTime,
+        status: room.status,
       });
     }
   }
@@ -128,7 +125,12 @@ io.on("connection", (socket) => {
 
   const roomId = findAvailableRoom();
   if (!rooms[roomId]) {
-    rooms[roomId] = { id: roomId, players: [], text: "" };
+    rooms[roomId] = {
+      id: roomId,
+      players: [],
+      text: "",
+      status: { status: 0 },
+    };
   }
 
   rooms[roomId].players.push({
@@ -138,24 +140,33 @@ io.on("connection", (socket) => {
     character: character,
   });
   socket.join(`room-${roomId}`);
-  socket.emit("joinedRoom", roomId);
+  //socket.emit("joinedRoom", roomId);
   io.to(`room-${roomId}`).emit("text", "Waiting for players");
-  console.log(username, roomId, rooms, socket.handshake.query);
   if (rooms[roomId].players.length == MAX_PLAYERS_PER_ROOM) {
     rooms[roomId].id = roomId;
     rooms[roomId].text = generateText();
     rooms[roomId].startTime = Date.now();
+    rooms[roomId].status = { status: 1 };
     rooms[roomId].players = rooms[roomId].players.map((player) => ({
       ...player,
       progress: "",
     }));
-    console.log(rooms);
     io.to(`room-${roomId}`).emit("text", rooms[roomId].text);
     io.to(`room-${roomId}`).emit("players", {
       players: rooms[roomId].players,
+      status: rooms[roomId].status,
       startTime: rooms[roomId].startTime,
     });
+  } else {
+    io.to(`room-${roomId}`).emit("players", {
+      players: rooms[roomId].players,
+      status: rooms[roomId].status,
+    });
   }
+  console.log({
+    players: rooms[roomId].players,
+    status: rooms[roomId].status,
+  });
 
   // handle the update progress event
   socket.on("updateProgress", (progress) => {
@@ -191,11 +202,13 @@ io.on("connection", (socket) => {
       io.to(`room-${roomId}`).emit("players", {
         players: rooms[roomId].players,
         startTime: rooms[roomId].startTime,
+        status: rooms[roomId].status,
       });
     }
 
     // if the room is now empty, delete it
     if (rooms[roomId].players.length === 0) {
+      rooms[roomId].status.status = 0;
       // delete rooms[roomId];
     }
   });
