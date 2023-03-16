@@ -1,0 +1,107 @@
+@import "./assets/styles/variables";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.066);
+
+  .Modal {
+    position: absolute;
+    display: grid;
+    place-content: center;
+    border: 0;
+    overflow: auto;
+  }
+}
+
+
+.link-share-modal {
+  position: relative;
+  width: 420px;
+  height: 250px;
+  display: flex;
+  padding: 20px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  flex-direction: column;
+  background-color: $backgorund-color;
+  border: 1px solid $border-color-3;
+  border-radius: 10px;
+  padding: 10px;
+  padding-inline: 20px;
+  color: $text-color-1;
+
+
+
+  .links {
+    display: flex;
+    width: 100%;
+    height: 100px;
+    justify-content: space-around;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .copy-row {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    margin-top: 20px;
+    align-items: center;
+    border: 1px solid $border-color-3;
+    padding-inline: 5px;
+    border-radius: 10px;
+
+    i {
+      margin-left: 15px;
+    }
+
+    input {
+      width: 70%;
+      height: 100%;
+      border: 0;
+      margin-left: 10px;
+      background-color: $backgorund-color;
+      color: $text-color-1;
+
+      &:focus {
+        outline: 0;
+      }
+    }
+
+    .riple-btn {
+      width: 80px;
+      height: 80%;
+      border: 0;
+      border-radius: 10px;
+      margin-left: 10px;
+    }
+
+    button {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background-color: $sub-backgorund-color-2;
+      color: black;
+    }
+  }
+}

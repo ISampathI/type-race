@@ -17,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/play" element={<Game />} />
+            <Route path="/play/:qrid" element={<Game />} />
           </Routes>
         </div>
       </SocketContext.Provider>
