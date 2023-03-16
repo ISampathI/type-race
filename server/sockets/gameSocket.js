@@ -1,6 +1,6 @@
 let text = "";
 const MAX_PLAYERS_PER_ROOM = 2;
-const rooms = [];
+const publicRooms = [];
 const privateRooms = [];
 const soloRooms = [];
 
@@ -50,7 +50,7 @@ const calculateProgress = (text, progress) => {
   return `${percentage.toFixed(2)}%`;
 };
 
-const findAvailableRoom = () => {
+const findAvailableRoom = (rooms) => {
   let roomId;
   for (const room of rooms) {
     if (room?.players?.length < MAX_PLAYERS_PER_ROOM) {
@@ -65,7 +65,7 @@ const findAvailableRoom = () => {
 };
 
 module.exports = (io) => {
-  const updateProgress = (socket, progress) => {
+  const updateProgress = (socket, progress, rooms) => {
     const room = rooms.find(
       (r) => r.players && r.players.some((p) => p.id === socket.id)
     );
@@ -76,23 +76,6 @@ module.exports = (io) => {
         player.progress = calculateProgress(room.text, progress);
         if (room.startTime) {
           const elapsedTime = (Date.now() - room.startTime) / 1000; // Convert to seconds
-          console.log(
-            Date.now(),
-            room.startTime,
-            (Date.now() - room.startTime) / 1000,
-            progress
-              .trim()
-              .replace(/(\r\n|\n|\r)/gm, "")
-              .split(" ").length,
-            elapsedTime / 60,
-            Math.round(
-              progress
-                .trim()
-                .replace(/(\r\n|\n|\r)/gm, "")
-                .split(" ").length /
-                (elapsedTime / 60)
-            )
-          );
           wpm = Math.round(
             progress
               .trim()
@@ -115,9 +98,17 @@ module.exports = (io) => {
     console.log(`A new client has connected with id ${socket.id}`);
     const username = socket.handshake.query.username;
     const character = socket.handshake.query.character;
-    const gameType = socket.handshake.query.gameType;
+    const roomType = socket.handshake.query.gameType;
+    let rooms = [];
 
-    const roomId = findAvailableRoom();
+    if (roomType == 0) {
+      rooms = publicRooms;
+    } else if (roomType == 1) {
+      rooms = privateRooms;
+    } else if (roomType == 2) {
+      rooms = soloRooms;
+    }
+    const roomId = findAvailableRoom(rooms);
     if (!rooms[roomId]) {
       rooms[roomId] = {
         id: roomId,
@@ -136,7 +127,7 @@ module.exports = (io) => {
     socket.join(`room-${roomId}`);
     //socket.emit("joinedRoom", roomId);
     io.to(`room-${roomId}`).emit("text", "Waiting for players");
-    if (rooms[roomId].players.length == MAX_PLAYERS_PER_ROOM) {
+    if (rooms[roomId].players.length == MAX_PLAYERS_PER_ROOM || roomType == 2) {
       rooms[roomId].id = roomId;
       rooms[roomId].text = generateText();
       rooms[roomId].startTime = Date.now();
@@ -160,11 +151,14 @@ module.exports = (io) => {
     console.log({
       players: rooms[roomId].players,
       status: rooms[roomId].status,
+      publicRooms: publicRooms,
+      privateRooms: privateRooms,
+      soloRooms: soloRooms,
     });
 
     // handle the update progress event
     socket.on("updateProgress", (progress) => {
-      updateProgress(socket, progress, roomId);
+      updateProgress(socket, progress, rooms);
     });
 
     socket.on("disconnect", () => {

@@ -43,19 +43,19 @@
             .reading-para {
                 width: 100%;
                 color: white;
-                white-space: nowrap;
+                // white-space: nowrap;
+                text-align: center;
+                font-weight: 100;
 
                 .reading-para-1 {
-                    font-weight: 600;
+                    color: wheat;
                 }
 
                 .reading-para-2 {
-                    font-weight: 100;
                     border-bottom: 1px solid white;
                 }
 
                 .reading-para-3 {
-                    font-weight: 100;
                 }
             }
 

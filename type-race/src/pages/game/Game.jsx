@@ -119,7 +119,7 @@ function Game() {
           <div className="text-space">
             <div className="reading-para">
               <span className="reading-para-1">{progress}</span>
-              <span className="reading-para-2">
+              <span className="reading-para-2"> 
                 {text.replace(progress, "").split(" ")[0]}
               </span>
               <span className="reading-para-3">

@@ -107,14 +107,14 @@ function Land() {
               type="submit"
               value="Play Solo"
               name="submit"
-              onClick={() => setGameType(1)}
+              onClick={() => setGameType(2)}
             />
             <div className="spacer-l"></div>
             <input
               type="submit"
               value="Play With Friends"
               name="submit"
-              onClick={() => setGameType(2)}
+              onClick={() => setGameType(1)}
             />
           </div>
         </form>
