@@ -106,6 +106,7 @@ function Game() {
             </div>
           ))}
         </div>
+        <div className="spacer-r"></div>
       </div>
       <div className="bottom-container">
         {gameStatus.status == 2 && (

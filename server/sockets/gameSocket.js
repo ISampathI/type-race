@@ -1,8 +1,8 @@
 let text = "";
 const MAX_PLAYERS_PER_ROOM = 2;
-const publicRooms = [];
-const privateRooms = [];
-const soloRooms = [];
+const publicRooms = {};
+const privateRooms = {};
+const soloRooms = {};
 
 const generateText = () => {
   const words = [
@@ -52,23 +52,21 @@ const calculateProgress = (text, progress) => {
 
 const findAvailableRoom = (rooms) => {
   let roomId;
-  for (const room of rooms) {
+  for (const key in rooms) {
+    const room = rooms[key];
     if (room?.players?.length < MAX_PLAYERS_PER_ROOM) {
       roomId = room.id;
       break;
     }
   }
   if (roomId == undefined) {
-    roomId = rooms.length;
+    roomId = Object.keys(rooms).length || 0;
   }
   return roomId;
 };
 
 module.exports = (io) => {
-  const updateProgress = (socket, progress, rooms) => {
-    const room = rooms.find(
-      (r) => r.players && r.players.some((p) => p.id === socket.id)
-    );
+  const updateProgress = (socket, progress, room) => {
     if (room) {
       const player = room.players.find((p) => p.id === socket.id);
       if (player) {
@@ -99,17 +97,20 @@ module.exports = (io) => {
     const username = socket.handshake.query.username;
     const character = socket.handshake.query.character;
     const roomType = socket.handshake.query.gameType;
-    let rooms = [];
+    let rooms = {};
+    let roomId;
 
     if (roomType == 0) {
       rooms = publicRooms;
+      roomId = findAvailableRoom(rooms);
     } else if (roomType == 1) {
       rooms = privateRooms;
+      roomId = findAvailableRoom(rooms);
     } else if (roomType == 2) {
       rooms = soloRooms;
     }
-    const roomId = findAvailableRoom(rooms);
     if (!rooms[roomId]) {
+      roomId = socket.id;
       rooms[roomId] = {
         id: roomId,
         players: [],
@@ -149,8 +150,6 @@ module.exports = (io) => {
       });
     }
     console.log({
-      players: rooms[roomId].players,
-      status: rooms[roomId].status,
       publicRooms: publicRooms,
       privateRooms: privateRooms,
       soloRooms: soloRooms,
@@ -158,9 +157,8 @@ module.exports = (io) => {
 
     // handle the update progress event
     socket.on("updateProgress", (progress) => {
-      updateProgress(socket, progress, rooms);
+      updateProgress(socket, progress, rooms[roomId]);
     });
-
     socket.on("disconnect", () => {
       console.log(`The client with id ${socket.id} has disconnected`);
 
@@ -180,8 +178,13 @@ module.exports = (io) => {
       // if the room is now empty, delete it
       if (rooms[roomId].players.length === 0) {
         rooms[roomId].status.status = 0;
-        // delete rooms[roomId];
+        delete rooms[roomId];
       }
+      console.log({
+        publicRooms: publicRooms,
+        privateRooms: privateRooms,
+        soloRooms: soloRooms,
+      });
     });
   });
 };
