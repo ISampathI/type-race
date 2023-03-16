@@ -11,7 +11,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        animation: starRoteteAnim 120s infinite ease;
+        animation: starRoteteAnim 120s infinite linear;
     }
     @keyframes starRoteteAnim {
         0% {
