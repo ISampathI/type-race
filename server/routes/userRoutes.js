@@ -1,10 +1,11 @@
 const express = require("express");
-
 const router = express.Router();
+const { User } = require("../models");
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const { name } = req.query;
-  res.send(`welcom back, ${name}`);
+  const user = await User.findAll();
+  res.send(`welcom back, ${JSON.stringify(user)}`);
 });
 
 module.exports = router;

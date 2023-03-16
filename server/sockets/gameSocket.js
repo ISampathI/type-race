@@ -1,8 +1,9 @@
-let text = ""; // the text that needs to be typed by the players
-const MAX_PLAYERS_PER_ROOM = 2; // maximum number of players per room
-const rooms = []; // list of all active rooms
+let text = "";
+const MAX_PLAYERS_PER_ROOM = 2;
+const rooms = [];
+const privateRooms = [];
+const soloRooms = [];
 
-// generate a random text for the game
 const generateText = () => {
   const words = [
     "apple",
@@ -64,7 +65,6 @@ const findAvailableRoom = () => {
 };
 
 module.exports = (io) => {
-  // update the player's progress and emit the updated list of players to all clients
   const updateProgress = (socket, progress) => {
     const room = rooms.find(
       (r) => r.players && r.players.some((p) => p.id === socket.id)
@@ -115,6 +115,7 @@ module.exports = (io) => {
     console.log(`A new client has connected with id ${socket.id}`);
     const username = socket.handshake.query.username;
     const character = socket.handshake.query.character;
+    const gameType = socket.handshake.query.gameType;
 
     const roomId = findAvailableRoom();
     if (!rooms[roomId]) {

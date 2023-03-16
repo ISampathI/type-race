@@ -33,6 +33,7 @@ function Land() {
 
   const [username, setUsername] = useState("player");
   const [rocket, setRocket] = useState(0);
+  const [gameType, setGameType] = useState(0);
 
   const changeRocket = (left = true) => {
     if (left) {
@@ -51,6 +52,7 @@ function Land() {
         query: {
           username: username || "guest",
           character: rocket || 0,
+          gameType: gameType,
         },
       })
     );
@@ -63,8 +65,8 @@ function Land() {
       <div className="join-form">
         <div className="form-title">Play Now</div>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-          placeat reiciendis assumenda culpa, itaque ipsum
+          Multiplayer typing challenge. Test your skills, compete with friends,
+          and improve your typing speed and accuracy!
         </p>
         <form onSubmit={handleSubmit}>
           <div className="select-rocket">
@@ -92,7 +94,28 @@ function Land() {
               }}
             />
             <div className="spacer-l"></div>
-            <input type="submit" value="PLAY" />
+            <input
+              type="submit"
+              value="Play As Guest"
+              name="submit"
+              onClick={() => setGameType(0)}
+            />
+          </div>
+          <div className="row" style={{ height: "20px" }}></div>
+          <div className="row">
+            <input
+              type="submit"
+              value="Play Solo"
+              name="submit"
+              onClick={() => setGameType(1)}
+            />
+            <div className="spacer-l"></div>
+            <input
+              type="submit"
+              value="Play With Friends"
+              name="submit"
+              onClick={() => setGameType(2)}
+            />
           </div>
         </form>
       </div>
