@@ -118,8 +118,8 @@ function Game() {
         handleModalClose("modal2");
         console.log(roomId);
       });
-    }else{
-      !qrid && navigate("/")
+    } else {
+      !qrid && navigate("/");
     }
   }, [socket]);
 
@@ -230,7 +230,7 @@ function Game() {
             <ul>
               {players.map((player) => (
                 <li>
-                  {player.name}: {player.progress}- {player.wpm}wpm
+                  {player.name}: {player.wpm || 0} wpm
                 </li>
               ))}
             </ul>
