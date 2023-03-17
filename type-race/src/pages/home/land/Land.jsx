@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./land.scss";
 import rocket1 from "../../../assets/img/rockets/rocket1.png";
 import rocket2 from "../../../assets/img/rockets/rocket2.png";
@@ -35,6 +35,9 @@ function Land() {
   const [rocket, setRocket] = useState(0);
   const [gameType, setGameType] = useState(0);
 
+  useEffect(() => {
+    socket?.disconnect();
+  }, []);
   const changeRocket = (left = true) => {
     if (left) {
       rocket == 0 ? setRocket(rocketList.length - 1) : setRocket(rocket - 1);
@@ -47,7 +50,7 @@ function Land() {
     e.preventDefault();
     setUser({ username: username, character: rocket });
     setSocket(
-      io("http://localhost:5000", {
+      io("http://192.168.1.102:5000", {
         transports: ["websocket", "polling", "flashsocket"],
         query: {
           username: username || "guest",

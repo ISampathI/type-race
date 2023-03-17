@@ -32,6 +32,8 @@ import {
   UserContext,
 } from "../../helper/context";
 import { useNavigate, useParams } from "react-router-dom";
+import io from "socket.io-client";
+import axios from "axios";
 
 const rocketList = [
   rocket1,
@@ -74,11 +76,26 @@ function Game() {
     madal2: false,
   });
 
+  const [username, setUsername] = useState("player");
+  const [rocket, setRocket] = useState(0);
+  const [gameType, setGameType] = useState(0);
+
   var { qrid } = useParams();
 
   useEffect(() => {
     if (qrid) {
       setRoomId(qrid);
+      axios
+        .get(`http://192.168.1.102:5000/check-room-availability/${qrid}`)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.message) {
+            handleModalOpen("modal2");
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
   }, [qrid]);
 
@@ -91,12 +108,18 @@ function Game() {
 
       socket.on("text", (text) => {
         setText(text);
+        handleModalClose("modal1");
+        handleModalClose("modal2");
       });
 
       socket.on("joinedRoom", (roomId) => {
         setRoomId(roomId);
+        handleModalClose("modal1");
+        handleModalClose("modal2");
         console.log(roomId);
       });
+    }else{
+      !qrid && navigate("/")
     }
   }, [socket]);
 
@@ -110,6 +133,31 @@ function Game() {
   };
   const handleModalClose = (modal) => {
     setIsModalOpen((prev) => ({ ...prev, [modal]: false }));
+  };
+
+  const changeRocket = (left = true) => {
+    if (left) {
+      rocket == 0 ? setRocket(rocketList.length - 1) : setRocket(rocket - 1);
+    } else {
+      rocket == rocketList.length - 1 ? setRocket(0) : setRocket(rocket + 1);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    console.log("mmmm");
+    e.preventDefault();
+    setUser({ username: username, character: rocket });
+    setSocket(
+      io("http://192.168.1.102:5000", {
+        transports: ["websocket", "polling", "flashsocket"],
+        query: {
+          username: username || "guest",
+          character: rocket || 0,
+          gameType: 1,
+          roomId: roomId,
+        },
+      })
+    );
   };
 
   return (
@@ -189,6 +237,51 @@ function Game() {
           </div>
         )}
       </div>
+      <Modal
+        isOpen={isModalOpen.modal2}
+        className="Modal"
+        overlayClassName="modal-overlay"
+        contentLabel="Player Details Modal"
+      >
+        <div className="player-details-modal">
+          <div className="join-form">
+            <form onSubmit={handleSubmit}>
+              <div className="select-rocket">
+                <div className="left-switch-btn switch-btn">
+                  <i
+                    className="fa-solid fa-angle-left"
+                    onClick={() => changeRocket()}
+                  ></i>
+                </div>
+                <img src={rocketList[rocket]} alt="" className="rocket-img" />
+                <div className="right-switch-btn switch-btn">
+                  <i
+                    className="fa-solid fa-angle-right"
+                    onClick={() => changeRocket(false)}
+                  ></i>
+                </div>
+              </div>
+              <div className="column">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                />
+                <div className="spacer-l"></div>
+                <input
+                  type="submit"
+                  value="Join"
+                  name="submit"
+                  onClick={() => setGameType(0)}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      </Modal>
       <Modal
         isOpen={isModalOpen.modal1}
         onRequestClose={() => {

@@ -1,5 +1,5 @@
 let text = "";
-const MAX_PLAYERS_PER_ROOM = 2;
+const MAX_PLAYERS_PER_ROOM = 5;
 const publicRooms = {};
 const privateRooms = {};
 const soloRooms = {};
@@ -64,8 +64,14 @@ const findAvailableRoom = (rooms) => {
   }
   return roomId;
 };
-
-module.exports = (io) => {
+const getPrivateRooms = () => {
+  return privateRooms;
+};
+const isPrivateRoomAvailable = (roomId) => {
+  const room = privateRooms[roomId];
+  return room && room?.players?.length < MAX_PLAYERS_PER_ROOM ? true : false;
+};
+const gameSocket = (io) => {
   const updateProgress = (socket, progress, room) => {
     if (room) {
       const player = room.players.find((p) => p.id === socket.id);
@@ -98,14 +104,13 @@ module.exports = (io) => {
     const character = socket.handshake.query.character;
     const roomType = socket.handshake.query.gameType;
     let rooms = {};
-    let roomId;
+    let roomId = socket.handshake.query.roomId;
 
     if (roomType == 0) {
       rooms = publicRooms;
       roomId = findAvailableRoom(rooms);
     } else if (roomType == 1) {
       rooms = privateRooms;
-      roomId = findAvailableRoom(rooms);
     } else if (roomType == 2) {
       rooms = soloRooms;
     }
@@ -188,3 +193,5 @@ module.exports = (io) => {
     });
   });
 };
+
+module.exports = { gameSocket, isPrivateRoomAvailable };
