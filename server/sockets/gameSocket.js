@@ -69,17 +69,32 @@ const getPrivateRooms = () => {
 };
 const isPrivateRoomAvailable = (roomId) => {
   const room = privateRooms[roomId];
-  return room && room?.players?.length < MAX_PLAYERS_PER_ROOM ? true : false;
+  let data = {};
+  if (room && room?.players?.length < MAX_PLAYERS_PER_ROOM) {
+    data = {
+      players: room.players,
+      startTime: room.startTime,
+      status: room.status,
+    };
+  }
+  return {
+    data: data,
+    availability:
+      room && room?.players?.length < MAX_PLAYERS_PER_ROOM ? true : false,
+  };
 };
 const gameSocket = (io) => {
   const updateProgress = (socket, progress, room) => {
     if (room) {
-      const player = room.players.find((p) => p.id === socket.id);
+      let player = room.players.find((p) => p.id === socket.id);
       if (player) {
+        if (player.startTime == undefined) {
+          player.startTime = Date.now();
+        }
         let wpm = 0;
         player.progress = calculateProgress(room.text, progress);
         if (room.startTime) {
-          const elapsedTime = (Date.now() - room.startTime) / 1000; // Convert to seconds
+          const elapsedTime = (Date.now() - player.startTime) / 1000; // Convert to seconds
           wpm = Math.round(
             progress
               .trim()
@@ -120,6 +135,7 @@ const gameSocket = (io) => {
         id: roomId,
         players: [],
         text: "",
+        startTime: "",
         status: { status: 0 },
       };
     }

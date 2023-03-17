@@ -12,13 +12,11 @@
     }
     
     nav{
-        margin-left: auto;
-
         ul{
             display: flex;
             list-style: none;
             li{
-                margin-right: 50px;
+                margin-inline: 25px;
                 padding-block: 10px;
             }
 
@@ -28,16 +26,16 @@
         }
     }
     .buttons{
-        .login-btn{
+        .login-btn, .register-btn{
             height: 35px;
-            border: 1px solid white;
             padding: 10px;
-            margin-left: 30px;
             padding-inline: 20px;
             background-color: transparent;
             border-radius: 18px;
             color: white;
             font-weight: 600;
+            border: 0;
+            cursor: pointer;
         }
     }
 }

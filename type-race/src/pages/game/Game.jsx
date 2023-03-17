@@ -89,7 +89,9 @@ function Game() {
         .get(`http://192.168.1.102:5000/check-room-availability/${qrid}`)
         .then((res) => {
           console.log(res.data);
-          if (res.data.message) {
+          if (res.data.message.availability) {
+            setPlayers(res.data.message.data.players);
+            setGameStatus(res.data.message.data.status);
             handleModalOpen("modal2");
           }
         })
@@ -191,6 +193,16 @@ function Game() {
             </div>
           ))}
         </div>
+        <div className="players-status">
+          <ul>
+            {players.map((player) => (
+              <li>
+                {player.name}: {player.wpm || 0} wpm
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className="spacer-r"></div>
       </div>
       <div className="bottom-container">
@@ -225,7 +237,7 @@ function Game() {
             ></textarea>
           </div>
         )}
-        {gameStatus.status == 1 && (
+        {/* {gameStatus.status == 1 && (
           <div className="players-status">
             <ul>
               {players.map((player) => (
@@ -235,7 +247,7 @@ function Game() {
               ))}
             </ul>
           </div>
-        )}
+        )} */}
       </div>
       <Modal
         isOpen={isModalOpen.modal2}

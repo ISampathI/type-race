@@ -13,6 +13,8 @@ import planet from "../../../assets/img/space/planet.png";
 import { useNavigate } from "react-router-dom";
 import { SocketContext, UserContext } from "../../../helper/context";
 import io from "socket.io-client";
+import Modal from "react-modal";
+import Ripples from "react-ripples";
 
 const rocketList = [
   rocket1,
@@ -34,6 +36,10 @@ function Land() {
   const [username, setUsername] = useState("player");
   const [rocket, setRocket] = useState(0);
   const [gameType, setGameType] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState({
+    modal1: false,
+    madal2: false,
+  });
 
   useEffect(() => {
     socket?.disconnect();
@@ -62,6 +68,12 @@ function Land() {
     navigate("play");
   };
 
+  const handleModalOpen = (modal) => {
+    setIsModalOpen((prev) => ({ ...prev, [modal]: true }));
+  };
+  const handleModalClose = (modal) => {
+    setIsModalOpen((prev) => ({ ...prev, [modal]: false }));
+  };
   return (
     <div className="Land">
       <img src={planet} alt="" className="planet-img" />
@@ -122,6 +134,51 @@ function Land() {
           </div>
         </form>
       </div>
+      <Modal
+        isOpen={isModalOpen.modal2}
+        className="Modal"
+        overlayClassName="modal-overlay"
+        contentLabel="Player Details Modal"
+      >
+        <div className="player-details-modal">
+          <div className="join-form">
+            <form onSubmit={handleSubmit}>
+              <div className="select-rocket">
+                <div className="left-switch-btn switch-btn">
+                  <i
+                    className="fa-solid fa-angle-left"
+                    onClick={() => changeRocket()}
+                  ></i>
+                </div>
+                <img src={rocketList[rocket]} alt="" className="rocket-img" />
+                <div className="right-switch-btn switch-btn">
+                  <i
+                    className="fa-solid fa-angle-right"
+                    onClick={() => changeRocket(false)}
+                  ></i>
+                </div>
+              </div>
+              <div className="column">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                />
+                <div className="spacer-l"></div>
+                <input
+                  type="submit"
+                  value="Join"
+                  name="submit"
+                  onClick={() => setGameType(0)}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
