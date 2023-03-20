@@ -8,7 +8,7 @@ import { Route, Router, Routes } from "react-router-dom";
 import Game from "./pages/game/Game";
 
 function App() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({ isLogged: false });
   const [socket, setSocket] = useState(null);
   return (
     <UserContext.Provider value={{ user, setUser }}>

@@ -86,7 +86,7 @@ function Game() {
     if (qrid) {
       setRoomId(qrid);
       axios
-        .get(`http://192.168.1.102:5000/check-room-availability/${qrid}`)
+        .get(`http://localhost:5000/check-room-availability/${qrid}`)
         .then((res) => {
           console.log(res.data);
           if (res.data.message.availability) {
@@ -150,7 +150,7 @@ function Game() {
     e.preventDefault();
     setUser({ username: username, character: rocket });
     setSocket(
-      io("http://192.168.1.102:5000", {
+      io("http://localhost:5000", {
         transports: ["websocket", "polling", "flashsocket"],
         query: {
           username: username || "guest",

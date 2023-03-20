@@ -15,14 +15,14 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 const io = socketio(server);
 
-// db.sequelize
-//   .sync({ force: false, alter: true })
-//   .then(() => {
-//     console.log("Database is synced.");
-//   })
-//   .catch((err) => {
-//     console.error("Error syncing database:", err);
-//   });
+db.sequelize
+  .sync({ force: false, alter: true })
+  .then(() => {
+    console.log("Database is synced.");
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
+  });
 
 gameSocket(io);
 
