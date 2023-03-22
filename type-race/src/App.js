@@ -6,11 +6,13 @@ import { PlayerPosContext, SocketContext, UserContext } from "./helper/context";
 import Home from "./pages/home/Home";
 import { Route, Router, Routes } from "react-router-dom";
 import Game from "./pages/game/Game";
+import {CookiesProvider} from "react-cookie"
 
 function App() {
   const [user, setUser] = useState({ isLogged: false });
   const [socket, setSocket] = useState(null);
   return (
+    <CookiesProvider>
     <UserContext.Provider value={{ user, setUser }}>
       <SocketContext.Provider value={{ socket, setSocket }}>
         <div className="App">
@@ -22,6 +24,7 @@ function App() {
         </div>
       </SocketContext.Provider>
     </UserContext.Provider>
+    </CookiesProvider>
   );
 }
 

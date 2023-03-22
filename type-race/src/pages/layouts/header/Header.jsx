@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ModalOpenContext } from "../../home/Home";
 import Modal from "react-modal";
 import Ripples from "react-ripples";
 import "./header.scss";
 import axios from "axios";
 import { UserContext } from "../../../helper/context";
+import { Cookies, useCookies } from "react-cookie";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/",
@@ -25,6 +26,38 @@ function Header() {
   });
   const [regErrors, setRegErrors] = useState({});
   const [logErrors, setLogErrors] = useState({});
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
+
+  useEffect(() => {
+    api
+      .post(
+        "/users/checkToken",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${cookies.token}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.status == 200) {
+          let userObj = res.data.user;
+          userObj.isLogged = true;
+          setUser(userObj);
+          setCookie("token", res.data.accessToken, { path: "/" });
+          handleModalClose("modal2");
+          handleModalClose("modal1");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        if (e.response.status == 400) {
+          setLogErrors(e.response.data.errors);
+          console.log(logErrors, "#");
+        }
+      });
+  }, []);
 
   const handleModalOpen = (modal) => {
     setIsModalOpen((prev) => ({ ...prev, [modal]: true }));
@@ -93,6 +126,7 @@ function Header() {
           let userObj = res.data.user;
           userObj.isLogged = true;
           setUser(userObj);
+          setCookie("token", res.data.accessToken, { path: "/" });
           handleModalClose("modal2");
           handleModalClose("modal1");
         }
@@ -153,7 +187,21 @@ function Header() {
             </button>
           </>
         )}
-        {user.isLogged && <button className="profile-btn"><i class="fa-solid fa-user"></i></button>}
+        {user.isLogged && (
+          <button className="profile-btn">
+            <i class="fa-solid fa-user"></i>{" "}
+            <div className="profile-dropdown">
+              <i class="fa-solid fa-caret-up"></i>
+              <div className="dropdown-container">
+                <ul>
+                  <li>Profile</li>
+                  <li>Settings</li>
+                  <li>Logout</li>
+                </ul>
+              </div>
+            </div>
+          </button>
+        )}
       </div>
       <Modal
         isOpen={isModalOpen.modal1}

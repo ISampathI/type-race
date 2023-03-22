@@ -44,35 +44,74 @@ exports.registerUser = async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    console.log(username, password);
-    const user = await User.findOne({
-      where: {
-        username: username,
-      },
-    });
-    if (!user) {
-      return res
-        .status(400)
-        .json({
+    const authHeader = req.headers.authorization;
+    console.log(username, password, authHeader);
+
+    if (username === undefined && password === undefined) {
+      if (authHeader) {
+        const token = authHeader.split(" ")[1];
+
+        jwt.verify(token, "mmmm", async (err, user) => {
+          if (err) {
+            return res.sendStatus(403);
+          }
+          console.log(user, "###");
+          const userObj = await User.findOne({
+            where: {
+              id: user.userId,
+            },
+          });
+        });
+      } else {
+        res.sendStatus(401);
+      }
+    } else {
+      const user = await User.findOne({
+        where: {
+          username: username,
+        },
+      });
+      if (!user) {
+        return res.status(400).json({
           errors: {
             username: "Invalid username or password",
             password: "Invalid username or password",
           },
         });
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({
+      }
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({
           errors: {
             username: "Invalid username or password",
             password: "Invalid username or password",
           },
         });
+      }
+      const accessToken = jwt.sign({ userId: user.uid }, "mmmm");
+      res.json({ message: "Login successful", accessToken, user });
     }
-    const accessToken = jwt.sign({ userId: user.id }, "mmmm");
-    res.json({ message: "Login successful", accessToken, user });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.checkToken = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+      const token = authHeader.split(" ")[1];
+
+      jwt.verify(token, "mmmm", (err, user) => {
+        if (err) {
+          return res.sendStatus(403).json({ message: 'Failed to authenticate token.' });;
+        }
+        req.user = user;
+        next();
+      });
+    } else {
+      res.sendStatus(401).json({ message: "No token provided." });
+    }
   } catch (err) {
     next(err);
   }
