@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { User } = require("../models");
-const userController = require('../controllers/userController');
+const userController = require("../controllers/userController");
 
 // router.get("/", async (req, res) => {
 //   const { name } = req.query;
@@ -15,8 +15,8 @@ const userController = require('../controllers/userController');
 //   res.send(`welcom back, ${JSON.stringify(username)}`);
 // });
 
-router.post('/', userController.registerUser);
-router.post('/login', userController.loginUser);
-router.post('/checkToken', userController.checkToken);
+router.post("/", userController.registerUser);
+router.post("/login", userController.loginUser);
+router.post("/checkToken", userController.checkToken);
 
 module.exports = router;

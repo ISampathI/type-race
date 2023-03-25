@@ -32,7 +32,7 @@ function Header() {
     api
       .post(
         "/users/checkToken",
-        {},
+        { check: true },
         {
           headers: {
             Authorization: `Bearer ${cookies.token}`,
@@ -45,17 +45,10 @@ function Header() {
           let userObj = res.data.user;
           userObj.isLogged = true;
           setUser(userObj);
-          setCookie("token", res.data.accessToken, { path: "/" });
-          handleModalClose("modal2");
-          handleModalClose("modal1");
         }
       })
       .catch((e) => {
         console.log(e);
-        if (e.response.status == 400) {
-          setLogErrors(e.response.data.errors);
-          console.log(logErrors, "#");
-        }
       });
   }, []);
 
