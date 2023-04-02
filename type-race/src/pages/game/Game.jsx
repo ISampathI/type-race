@@ -79,6 +79,7 @@ function Game() {
   const [username, setUsername] = useState("player");
   const [rocket, setRocket] = useState(0);
   const [gameType, setGameType] = useState(0);
+  // const 
 
   var { qrid } = useParams();
 

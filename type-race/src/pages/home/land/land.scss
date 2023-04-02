@@ -13,6 +13,7 @@
         right: 50%;
         bottom: -13%;
         transform: rotate(20deg) translateX(50%);
+        user-select:none;
     }
 
     .join-form {
@@ -70,6 +71,7 @@
                     width: 100%;
                     aspect-ratio: 1/1;
                     object-fit: contain;
+                    user-select:none;
                     animation: rocketIdelAnim 2s infinite alternate ease;
                 }
 

@@ -12,6 +12,7 @@
         position: absolute;
         top: 0;
         left: 0;
+        user-select:none;
         animation: starRoteteAnim 120s infinite linear;
         z-index: -1;
     }
