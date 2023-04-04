@@ -1,5 +1,5 @@
 let text = "";
-const MAX_PLAYERS_PER_ROOM = 5;
+const MAX_PLAYERS_PER_ROOM = 2;
 const publicRooms = {};
 const privateRooms = {};
 const soloRooms = {};
@@ -147,7 +147,7 @@ const gameSocket = (io) => {
       character: character,
     });
     socket.join(`room-${roomId}`);
-    socket.emit("joinedRoom", roomId);
+    socket.emit("joinedRoom", { roomId: roomId, roomType: roomType });
     io.to(`room-${roomId}`).emit("text", "Waiting for players");
     if (rooms[roomId].players.length == MAX_PLAYERS_PER_ROOM || roomType == 2) {
       rooms[roomId].id = roomId;

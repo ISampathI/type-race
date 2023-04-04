@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./game.scss";
 import starsImg from "../../assets/img/background/stars.png";
 import rocket1 from "../../assets/img/rockets/rocket1.png";
@@ -62,10 +62,12 @@ const calculateProgress = (text, progress) => {
 function Game() {
   const navigate = useNavigate();
 
+  const typeSectionRef = useRef(null);
+
   const { user, setUser } = useContext(UserContext);
   const { socket, setSocket } = useContext(SocketContext);
-  const [isConnected, setIsConnected] = useState(false);
 
+  const [isConnected, setIsConnected] = useState(false);
   const [text, setText] = useState("");
   const [progress, setProgress] = useState("");
   const [players, setPlayers] = useState([]);
@@ -79,7 +81,7 @@ function Game() {
   const [username, setUsername] = useState("player");
   const [rocket, setRocket] = useState(0);
   const [gameType, setGameType] = useState(0);
-  // const 
+  // const
 
   var { qrid } = useParams();
 
@@ -110,16 +112,20 @@ function Game() {
       });
 
       socket.on("text", (text) => {
+        console.log(text);
         setText(text);
-        handleModalClose("modal1");
+        //handleModalClose("modal1");
+        typeSectionRef.current.focus();
         handleModalClose("modal2");
       });
 
-      socket.on("joinedRoom", (roomId) => {
-        setRoomId(roomId);
-        handleModalClose("modal1");
+      socket.on("joinedRoom", (gameData) => {
+        setRoomId(gameData.roomId);
+        gameData.roomType == 1
+          ? handleModalOpen("modal1")
+          : handleModalClose("modal1");
         handleModalClose("modal2");
-        console.log(roomId);
+        console.log(gameData);
       });
     } else {
       !qrid && navigate("/");
@@ -147,7 +153,6 @@ function Game() {
   };
 
   const handleSubmit = (e) => {
-    console.log("mmmm");
     e.preventDefault();
     setUser({ username: username, character: rocket });
     setSocket(
@@ -229,6 +234,11 @@ function Game() {
             </div>
             <textarea
               className="typing-para"
+              ref={typeSectionRef}
+              // onFocus={(e) => {
+              //   e.target.select();
+              // }}
+              autoFocus
               name=""
               id=""
               cols="30"

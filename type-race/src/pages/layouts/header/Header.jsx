@@ -5,7 +5,7 @@ import Ripples from "react-ripples";
 import "./header.scss";
 import axios from "axios";
 import { UserContext } from "../../../helper/context";
-import { Cookies, useCookies } from "react-cookie";
+import { Cookies, useCookies, removeCookie } from "react-cookie";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/",
@@ -133,6 +133,10 @@ function Header() {
       });
   };
 
+  const logOut = () => {
+    removeCookie("token");
+  };
+
   const handleRegForm = (e) => {
     setRegForm((prev) => {
       return {
@@ -157,9 +161,9 @@ function Header() {
       <div className="spacer-l"></div>
       <nav>
         <ul>
-          <li className="active-nav">Home</li>
+          {/* <li className="active-nav">Home</li>
           <li>Contact</li>
-          <li>About</li>
+          <li>About</li> */}
         </ul>
       </nav>
       <div className="spacer-r"></div>
@@ -189,7 +193,14 @@ function Header() {
                 <ul>
                   <li>Profile</li>
                   <li>Settings</li>
-                  <li>Logout</li>
+                  <li
+                    onClick={() => {
+                      logOut();
+                      setUser({ isLogged: false });
+                    }}
+                  >
+                    Logout
+                  </li>
                 </ul>
               </div>
             </div>

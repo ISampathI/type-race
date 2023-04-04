@@ -31,7 +31,7 @@ function Land() {
   const { user, setUser } = useContext(UserContext);
   const { socket, setSocket } = useContext(SocketContext);
 
-  const [username, setUsername] = useState("player");
+  const [username, setUsername] = useState("guest");
   const [rocket, setRocket] = useState(0);
   const [gameType, setGameType] = useState(0);
 
@@ -40,9 +40,10 @@ function Land() {
   }, []);
 
   useEffect(() => {
-    setUsername(user.username);
+    console.log(username, user.username);
+    setUsername(user.username || "guest");
   }, [user.username]);
-  
+
   const changeRocket = (left = true) => {
     if (left) {
       rocket == 0 ? setRocket(rocketList.length - 1) : setRocket(rocket - 1);
