@@ -9,8 +9,8 @@ Type Race Game is a fun and interactive typing game where you can challenge your
 - **Multiplayer Mode:** Challenge friends or compete with random players in real-time typing races.
 - **Real-time Updates:** Enjoy seamless gameplay with Socket.IO providing real-time updates during multiplayer matches.
 
-![ScreenShot](/screenshots/s1.png)
-![ScreenShot](/screenshots/s2.png)
-![ScreenShot](/screenshots/s3.png)
-![ScreenShot](/screenshots/s4.png)
-![ScreenShot](/screenshots/s5.png)
+![ScreenShot](/screenshots/s1.PNG)
+![ScreenShot](/screenshots/s2.PNG)
+![ScreenShot](/screenshots/s3.PNG)
+![ScreenShot](/screenshots/s4.PNG)
+![ScreenShot](/screenshots/s5.PNG)
